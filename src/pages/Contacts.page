@@ -1,0 +1,6 @@
+<apex:page standardController="Opportunity" tabStyle="Opportunity">
+  <apex:relatedList list="OpportunityContactRoles" >
+      <apex:facet name="header">Contacts</apex:facet>
+      <apex:facet name="footer"> </apex:facet>
+  </apex:relatedList>
+</apex:page>

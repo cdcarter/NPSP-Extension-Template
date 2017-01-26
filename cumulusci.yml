@@ -1,0 +1,24 @@
+project:
+    name: NPSP-Extension-Template
+    package:
+        name: NPSP-Extension-Template
+        namespace:
+        api_version: 38.0
+    git:
+        default_branch: master
+        prefix_beta: beta/
+        prefix_release: release/
+    dependencies:
+        - namespace: npo02
+          version: 3.6
+          dependencies:
+            - namespace: npe01
+              version: 3.4
+        - namespace: npe03
+          version: 3.5
+        - namespace: npe4
+          version: 3.3
+        - namespace: npe5
+          version: 3.3
+        - namespace: npsp
+          version: 3.88
