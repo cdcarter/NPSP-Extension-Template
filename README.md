@@ -12,27 +12,14 @@ The first step is to set up version control and test the build scripts against a
 * Create a Repository for your project in GitHub
 * Clone the GitHub repository to your local computer
 * Unzip the NPSP-Extension-Template.zip file into your cloned local repository
-* Edit cumulusci.properties
-	* **cumulusci.package.name**: The name of your package
-	* **cumulusci.package.namespace**: Your package's namespace.  You can leave blank if you don't know this yet
-	* **cumulusci.github.url.raw**: For example, *https://raw.github.com/SalesforceFoundation/Cumulus*
+* Edit cumulusci.yml to set the Project Name, Package Name, and namespace (if known)
 * [Create a Developer Edition](https://developer.salesforce.com/signup) org to use as your personal dev org for the project
-    * Log into your Developer Edition org and reset your security token, you'll need it later.  
+    * Log into your Developer Edition org.
     * Make sure you have Chatter and Chatter Publisher Actions enabled in the org
-    * Create a directory on your computer to store org credential files (`mkdir ~/orgs`)
-    * Create a file in the credentials directory for your Developer Edition org (name it however you want to refer to your personal dev org).  The file should contain the following:
-    
-        sf.username=YOUR@USER_HERE
-        sf.password=PASSWORDSECURITYTOKEN
-        sf.serverurl=https://login.salesforce.com
-        
-* Now, we need to set up the build scripts:
-	* Clone the CumulusCI repository: 
-	    
-	    `git clone git@github.com:SalesforceFoundation/CumulusCI ../CumulusCI`
-	* Run `ant updatePackageXml` to test that the build scripts work and to update your package.xml
-    * In your local repository, create a link to the org credentials file as `build.properties`.  This tells the build scripts to use your personal dev org as the default target org
-* Now, run the build: `ant deployCI` and watch as your new org is set up for development
+* Now, we need to set up our CumulusCI Org Connection:
+	* run `cci org connect dev` to OAuth to your Developer Edition. This will encrypt an access and refresh token, and not store your password.
+	* `cci` will fail if you are not in a local git repository.
+* Now, run the build: `cci flow run dev_org --org dev` and watch as your new org is set up for development
 * When the build completes, check the Installed Packages in the org
 * Go to Setup -> Create -> Packages and you should see your package, ready for development
 * If all goes well, add all the files, commit them, and push to GitHub:
@@ -52,8 +39,8 @@ Now that we have our development environment ready, it's time to start writing t
     * git fetch --all
     * git checkout -b feature/your-branch-name-here
 * Develop your changes to the metadata under the src directory
-* If you added any metadata, you should run `ant updatePackageXml` to regenerate `src/package.xml`
-* Run `ant deployCI` again to run the entire build against your Developer Edition org to ensure all your tests are passing
+* If you added any metadata, you should run `cci task run update_package_xml` to regenerate `src/package.xml`
+* Run `cci flow run ci_feature` again to run the entire build against your Developer Edition org to ensure all your tests are passing
 * Commit and push your changes to GitHub
 * Submit a Pull Request to merge your branch into master when the feature is ready
 * Merge the Pull Request
