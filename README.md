@@ -4,7 +4,12 @@ Want to extend the functionality of the [Nonprofit Starter Pack](https://github.
 Our hope is that by making it easier to share your contribution to the Nonprofit Starter Pack community, you can spend your time focusing on the business logic that adds value to the community.  This template should make it easy to automate much of the time consuming part of building and releasing an managed package which extends the Nonprofit Starter Pack.
 
 # Quick Start
-This section assumes you are somewhat familiar working with metadata in Salesforce from your local computer and have some basic familiarity with Git and GitHub.  The examples below show git commandline commands but you can accomplish the same functionality through most GUI git tools as well.
+This section assumes you are somewhat familiar working with metadata in Salesforce from your local computer and have some basic familiarity with Git and GitHub.  The examples below show git command line commands but you can accomplish the same functionality through most GUI git tools as well.
+
+If you need a primer on the command line and git, check out:
+* [Learn Enough Command Line to be Dangerous](https://www.learnenough.com/command-line-tutorial)
+* [Learn Enough Git to be Dangerous](https://www.learnenough.com/git-tutorial)
+
 
 ## Step 1: Setup
 The first step is to set up version control and test the build scripts against a fresh Developer Edition org.  This section should take about 30 minutes to complete.
@@ -34,12 +39,24 @@ At this point, anyone can check out your repository, create an org, and set up a
 ## Step 2: Develop
 Now that we have our development environment ready, it's time to start writing the great new idea that inspired you to go through that setup in the first place :)
 
-* Create a new branch in GitHub.  The name should start with `feature/` and you can put whatever you want after that (i.e. `feature/secondary-contact-on-account`).  The CumulusCI process isolates all your changes into branches.  It's easy to do and invaluable to helping multiple people work on the same project or a single person to work on multiple features without them interferring with eachother.
-* Check out the branch in your local repository:
-    * git fetch --all
-    * git checkout -b feature/your-branch-name-here
-* Develop your changes to the metadata under the src directory
+If you develop locally:
+
+* Create a new branch in your local git repository.  The name should start with `feature/` and you can put whatever you want after that (i.e. `feature/aura-controller`).  The CumulusCI process isolates all your changes into branches.  It's easy to do and invaluable to helping multiple people work on the same project or a single person to work on multiple features without them interfering with each other.
+    * `git checkout -b feature/aura-controller`
+* Develop your changes to the metadata under the src directory, using your tool of choice.
 * If you added any metadata, you should run `cci task run update_package_xml` to regenerate `src/package.xml`
+* Run `cci flow run ci_feature` again to run the entire build against your Developer Edition org to ensure all your tests are passing
+* Commit and push your changes to GitHub
+* Submit a Pull Request to merge your branch into master when the feature is ready
+* Merge the Pull Request
+* Repeat...
+
+If you develop primarily in the Developer Console or another remote IDE:
+* Create a new branch in your local git repository.  The name should start with `feature/` and you can put whatever you want after that (i.e. `feature/aura-controller`).  The CumulusCI process isolates all your changes into branches.  It's easy to do and invaluable to helping multiple people work on the same project or a single person to work on multiple features without them interfering with each other.
+    * `git checkout -b feature/aura-controller`
+* Develop your changes in the Developer Console.
+* Ensure *any* new metadata components you create get added to the unmanaged package that CumulusCI automatically created in your Dev Edition.
+* Run `cci task run retrieve_src` to pull the changes to your local environment.
 * Run `cci flow run ci_feature` again to run the entire build against your Developer Edition org to ensure all your tests are passing
 * Commit and push your changes to GitHub
 * Submit a Pull Request to merge your branch into master when the feature is ready
@@ -52,47 +69,31 @@ After you've merged your first feature branch, it's time to think about building
 This should take about 30 minutes to get your first beta managed package
 
 * Create a new Developer Edition org to serve as your packaging org
-	* Repeat the same process as in Step 1 to configure the org and create a credentials file
-* Run the build against the packaging org: `ant -propertyfile PATH/TO/CREDENTIALS deployCI`
+	* Configure the new org by running `cci org connect packaging`
+* Create the empty package to manage: `cci task run create_package --org packaging`
 * Log into the packaging org and go to Setup -> Create -> Packages.  Edit the configuration to assign the org a namespace and then assign your package as the managed package.
-* Edit `cumulusci.properties` and ensure that `cumulusci.package.namespace` is correct
-* Run `ant -propertyfile PATH/TO/CREDENTIALS deployCIPackageOrg`
-* In the packaging org, go to Setup -> Create -> Packages and click on your package.  Click the Upload button and upload a beta version of your package
+* Edit `cumulusci.yml` and ensure that `project__package__namespace` is correct
+* Run `cci flow run ci_master --org packaging`
+
+Now let's quickly configure Github.
+
+* First, generate a Personal Access Token with the repo scope. Don't close the window once it's created!
+* Run `cci project connect_github` to configure your Github account. Instead of entering your github password, use the person access token you created as your password.
+
+This step requires the managed package api!
+* Run `cci flow run release_beta --org packaging` to upload a beta and create a release on Github.
+
+If you don't have that API yet:
+* Upload your beta managed package manually through the api w/ version number 1.0
+* Run `cci task run github_release -o version 1.0 --org packaging` to create a github release for the current version.
+* Run `cci task run github_release_notes -o publish True -o tag release/1.0 --org dev` to update the release notes for the beta.
+
 * Create a new Developer Edition org to test beta packages
  	* Repeat the same process as in Step 1 to configure the org and create a credentials file
 * Install the beta package in the org then run the tests by running `ant -propertyfile PATH/TO/CREDENTIALS runAllTests`
 
-## Step 4: Automate
-Now comes the real payoff!  We're going to set up everything needed to automate the entire process for you so all you have to do is write code, commit and push to Github, and submit and merge Pull Requests to continue developing.
+## Step 4: Keep going!
 
-To get you going quickly, we're going to use CumulusCI's integration with [Codeship](https://codeship.com), a cloud hosted continuous integration service which can be used for free to build your public GitHub repository.
+### Automate
 
-We'll also need one more Developer Edition org which will be used to run apex tests against all feature branch commits pushed to the repository.
-
-* Sign in to Codeship using your GitHub account
-* Click **Create New Project**
-* Select your GitHub repository
-* Configure the project commands:
-    * **Modify your Setup Commands**: leave blank
-    * **Modify your Test Commands**: `bash codeship.sh`
-* Set up Environment variables
-	* SF_USERNAME_FEATURE - Username for the DE used to test feature branches
-	* SF_PASSWORD_FEATURE - Password and security token concatenated
-	* SF_SERVERURL_FEATURE - Server login url (usually https://login.salesforce.com)
-	* SF_USERNAME_PACKAGING - Packaging org credentials
-	* SF_PASSWORD_PACKAGING
-	* SF_SERVERURL_PACKAGING
-	* SF_USERNAME_BETA - Username for the DE org used to test beta packages
-	* SF_PASSWORD_BETA
-	* SF_SERVERURL_BETA
-	* GITHUB_ORG_NAME
-	* GITHUB_REPO_NAME
-	* GITHUB_USERNAME
-	* GITHUB_PASSWORD - This can be an API Token instead of your personal password
-* Now, try to do a push into a feature branch and see if Codeship builds the project for you
-* Next up, we want to automatically build and test a beta managed package after any commit to master (which should only be from a merged Pull Request!)
-    * Get the environment variables and values to enter into your Codeship project from the []CumulusCI OAuth Tool](https://cumulusci-oauth-tool.herokuapp.com/)
-    * Enter the values
-    * Merge a pull request…
-    * Codeship should kick off a build which will upload a beta managed package and then install the package in the beta org and run all tests against it.  It should also create a pre-release Release in your GitHub project for the beta.
-
+### Extend
