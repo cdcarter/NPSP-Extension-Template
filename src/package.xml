@@ -5,6 +5,7 @@
     <namespacePrefix>ghoulish123</namespacePrefix>
     <types>
         <members>FunClass</members>
+        <members>FunClass_TEST</members>
         <name>ApexClass</name>
     </types>
     <types>
