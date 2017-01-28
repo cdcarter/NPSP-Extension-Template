@@ -2,7 +2,7 @@ project:
     name: NPSP-Extension-Template
     package:
         name: NPSP-Extension-Template
-        namespace:
+        namespace: ghoulish123
         api_version: 38.0
     git:
         default_branch: master

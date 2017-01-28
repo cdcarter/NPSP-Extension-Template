@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-  <types>
-    <members>Contacts</members>
-    <name>ApexPage</name>
-</types>
-  <fullName>NPSP-Extension-Template</fullName>
-  <version>38.0</version>
+    <fullName>NPSP-Extension-Template</fullName>
+    <apiAccessLevel>Unrestricted</apiAccessLevel>
+    <namespacePrefix>ghoulish123</namespacePrefix>
+    <types>
+        <members>FunClass</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>Contacts</members>
+        <name>ApexPage</name>
+    </types>
+    <version>38.0</version>
 </Package>
