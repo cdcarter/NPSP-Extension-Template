@@ -1,7 +1,7 @@
 # NPSP Extention Template
-Want to extend the functionality of the [Nonprofit Starter Pack](https://github.com/SalesforceFoundation/Cumulus)?  This template provides a basic project skeleton so you can hit the ground running.  The main goal is to get you up and running with [CumulusCI](https://github.com/SalesforceFoundation/CumulusCI), the  process built and used by the Salesforce Foundation's development team to manage the development and release process for the Nonprofit Starter Pack.
+Want to extend the functionality of the [Nonprofit Success Pack](https://github.com/SalesforceFoundation/Cumulus)?  This template provides a basic project skeleton so you can hit the ground running.  The main goal is to get you up and running with [CumulusCI](https://github.com/SalesforceFoundation/CumulusCI), the  process built and used by the Salesforce.org's development team to manage the development and release process for the Nonprofit Success Pack.
 
-Our hope is that by making it easier to share your contribution to the Nonprofit Starter Pack community, you can spend your time focusing on the business logic that adds value to the community.  This template should make it easy to automate much of the time consuming part of building and releasing an managed package which extends the Nonprofit Starter Pack.
+Our hope is that by making it easier to share your contribution to the Nonprofit Success Pack community, you can spend your time focusing on the business logic that adds value to the community.  This template should make it easy to automate much of the time consuming part of building and releasing an managed package which extends the Nonprofit Success Pack.
 
 # Quick Start
 This section assumes you are somewhat familiar working with metadata in Salesforce from your local computer and have some basic familiarity with Git and GitHub.  The examples below show git command line commands but you can accomplish the same functionality through most GUI git tools as well.
@@ -89,8 +89,6 @@ If you don't have that API yet:
 * Run `cci task run github_release_notes -o publish True -o tag release/1.0 --org dev` to update the release notes for the beta.
 
 * Create a new Developer Edition org to test beta packages
- 	* Repeat the same process as in Step 1 to configure the org and create a credentials file
-* Install the beta package in the org then run the tests by running `ant -propertyfile PATH/TO/CREDENTIALS runAllTests`
 
 ## Step 4: Keep going!
 
